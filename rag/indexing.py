@@ -2,6 +2,7 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_qdrant import QdrantVectorStore
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from google import genai
 import os
 from dotenv import load_dotenv
@@ -14,7 +15,37 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 # URI 
 
 urls = [
-
+    "https://docs.chaicode.com/youtube/getting-started/",
+    "https://docs.chaicode.com/youtube/chai-aur-git/github/",
+    "https://docs.chaicode.com/youtube/chai-aur-git/managing-history/",
+    "https://docs.chaicode.com/youtube/chai-aur-git/diff-stash-tags/",
+    "https://docs.chaicode.com/youtube/chai-aur-git/branches/",
+    "https://docs.chaicode.com/youtube/chai-aur-git/behind-the-scenes/",
+    "https://docs.chaicode.com/youtube/chai-aur-git/terminology/",
+    "https://docs.chaicode.com/youtube/chai-aur-git/introduction/",
+    "https://docs.chaicode.com/youtube/chai-aur-git/welcome/",
+    "https://docs.chaicode.com/youtube/chai-aur-c/functions/",
+    "https://docs.chaicode.com/youtube/chai-aur-c/loops/",
+    "https://docs.chaicode.com/youtube/chai-aur-c/control-flow/",
+    "https://docs.chaicode.com/youtube/chai-aur-c/operators/",
+    "https://docs.chaicode.com/youtube/chai-aur-c/data-types/",
+    "https://docs.chaicode.com/youtube/chai-aur-c/variables-and-constants/",
+    "https://docs.chaicode.com/youtube/chai-aur-c/hello-world/",
+    "https://docs.chaicode.com/youtube/chai-aur-c/introduction/",
+    "https://docs.chaicode.com/youtube/chai-aur-c/welcome/",
+    "https://docs.chaicode.com/youtube/chai-aur-django/relationships-and-forms/",
+    "https://docs.chaicode.com/youtube/chai-aur-django/models/",
+    "https://docs.chaicode.com/youtube/chai-aur-django/tailwind/",
+    "https://docs.chaicode.com/youtube/chai-aur-django/jinja-templates/",
+    "https://docs.chaicode.com/youtube/chai-aur-django/getting-started/",
+    "https://docs.chaicode.com/youtube/chai-aur-django/welcome/",
+    "https://docs.chaicode.com/youtube/chai-aur-sql/joins-exercise/",
+    "https://docs.chaicode.com/youtube/chai-aur-sql/joins-and-keys/",
+    "https://docs.chaicode.com/youtube/chai-aur-sql/database-design-exercise/",
+    "https://docs.chaicode.com/youtube/chai-aur-sql/normalization/",
+    "https://docs.chaicode.com/youtube/chai-aur-sql/postgres/",
+    "https://docs.chaicode.com/youtube/chai-aur-sql/introduction/",
+    "https://docs.chaicode.com/youtube/chai-aur-sql/welcome/",
     "https://docs.chaicode.com/youtube/chai-aur-devops/welcome/",
     "https://docs.chaicode.com/youtube/chai-aur-devops/setup-vpc/",
     "https://docs.chaicode.com/youtube/chai-aur-devops/setup-nginx/",
@@ -36,24 +67,28 @@ print("LEN : " , len(doc))
 # Chunking of text
 
 text_split = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=500
+    chunk_size=1500,
+    chunk_overlap=300
 )
 
 split_doc = text_split.split_documents(documents=doc)
 
 # Vector  Embedding 
 
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="models/gemini-embedding-001"
+# embeddings = GoogleGenerativeAIEmbeddings(
+#     model="models/gemini-embedding-001"
+# )
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 # Using [embedding_model] create embeddings of [split_docs] and store in DB
 
 vector_store = QdrantVectorStore.from_documents(
     documents=split_doc,
     url="http://localhost:6334",
-    collection_name="RAG_DOC",
-    embedding=embeddings
+    collection_name="RAG",
+    embedding=embeddings,
+    batch_size=5 
 )
 
 print("Indexing creating successfully...")

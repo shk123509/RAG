@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from langchain_qdrant import QdrantVectorStore
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from google import genai
 from dotenv import load_dotenv
 import os
@@ -12,13 +12,17 @@ load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="models/gemini-embedding-001"
+# embeddings = GoogleGenerativeAIEmbeddings(
+#     model="models/gemini-embedding-001"
+# )
+
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
 vector_store = QdrantVectorStore.from_existing_collection(
     url="http://localhost:6334",
-    collection_name="RAG_DOC",
+    collection_name="RAG",
     embedding=embeddings
 )
 
@@ -93,6 +97,42 @@ Rules you MUST follow:
 6. Guide the user to open the relevant page number(s) to learn more.
 7. Do NOT fabricate or assume page numbers, document titles, or sources.
 8. If multiple documents are used, list each separately.
+
+OUTPUT FORMAT RULES:
+
+1. Use clear numbered headings:
+   1. Title
+   2. Section Name
+   3. Section Name
+
+2. Leave exactly ONE blank line between sections.
+
+3. Do NOT write content like:
+   "1.content"
+   "2.content"
+
+4. Always write headings in this format:
+   "1. Users Table"
+   "2. Courses Table"
+
+5. Under each heading:
+   - Start with a short explanation paragraph
+   - Then use bullet points if needed
+
+6. Do NOT add extra blank lines inside a section.
+
+7. Code blocks must:
+   - Appear AFTER explanation
+   - Be separated by one blank line
+   - Use proper code fences (```sql```)
+
+8. Do NOT add unnecessary symbols, emojis, or decoration.
+
+9. Keep spacing clean, readable, and professional.
+
+10. Output must look like exam notes / documentation, not chat text.
+
+
 
 Use the following answer format ONLY:
 

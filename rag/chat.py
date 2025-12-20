@@ -1,5 +1,5 @@
 from langchain_qdrant import QdrantVectorStore
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from google import genai
 import os
 from dotenv import load_dotenv
@@ -9,13 +9,17 @@ load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-embeddings = GoogleGenerativeAIEmbeddings(
-    model="models/gemini-embedding-001"
+# embeddings = GoogleGenerativeAIEmbeddings(
+#     model="models/gemini-embedding-001"
+# )
+
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
 vector_store = QdrantVectorStore.from_existing_collection(
     url="http://localhost:6334",
-    collection_name="RAG_DOC",
+    collection_name="RAG",
     embedding=embeddings
 )
 
@@ -57,9 +61,8 @@ Learn more:
 - Document: <Title>
 
 
-Sources:
-- <Source URL or Document Name>
-
+Sources: 
+- <Source URL or Document Name> 
 Context:
 {context}
 

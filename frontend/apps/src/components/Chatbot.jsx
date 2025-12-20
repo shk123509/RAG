@@ -91,8 +91,8 @@ const Chatbot = () => {
           {messages.map((m, i) => <Message key={i} {...m} />)}
           {isLoading && (
             <div className="msg-wrapper bot">
-              <div className="msg-avatar animate-pulse">AI</div>
-              <div className="msg-bubble loading-dots">Thinking<span>.</span><span>.</span><span>.</span></div>
+              <div className="msg-avatar animate-pulse">🤖</div>
+              <div className="msg-bubble loading-dots">🧠<span>.</span><span>.</span><span>.</span></div>
             </div>
           )}
           <div ref={endRef} />
